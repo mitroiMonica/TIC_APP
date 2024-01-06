@@ -2,3 +2,4 @@
 **/.env
 **/tic-app-key.json
 **/.DS_Store
+**/config.*
