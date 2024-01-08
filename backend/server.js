@@ -14,8 +14,9 @@ const app = express();
 app.use(express.json()); //adauga body-ul cererii la obiectul request sub forma de JSON
 app.use(
   cors({
-    // origin: [process.env.FRONTEND_ROUTE],
-    // credentials: true,
+    origin: [process.env.FRONTEND_ROUTE],
+    credentials: true,
+    "Access-Control-Allow-Origin": "*",
   })
 );
 

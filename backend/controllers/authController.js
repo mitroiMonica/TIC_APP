@@ -28,10 +28,14 @@ const register = async (req, res, next) => {
       email,
       password: await bcrypt.hash(password, 10),
     };
-    await userRef.add(newUser);
+    const user = await userRef.add(newUser);
+    const token = createToken({
+      userId: user.id,
+      // userEmail: email,
+    });
     res.status(201).json({
       status: "success",
-      message: "Registration done.",
+      token,
     });
   } catch (err) {
     next(err);
