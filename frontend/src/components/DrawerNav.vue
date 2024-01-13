@@ -1,27 +1,43 @@
 <script setup>
-import { ref } from "vue";
-
+import userStore from "./../context/loggedUser.js";
+import { ref, computed } from "vue";
+import router from "./../router/index.js";
 const drawer = ref(true);
 const rail = ref(true);
-const items = [
-  {
-    icon: "mdi-home",
-    title: "Homepage",
-    value: "homepage",
-  },
-  {
-    icon: "mdi-heart",
-    title: "Favorites",
-    value: "favorites",
-  },
-  {
-    icon: "mdi-bell",
-    title: "Notifications",
-    value: "notifications",
-  },
-];
-const logoutHandler = () => {
-  localStorage.clear("token");
+const { isLogged, logoutHandler } = userStore();
+const items = computed(() =>
+  isLogged.value
+    ? [
+        {
+          icon: "mdi-home",
+          title: "Homepage",
+          value: "homepage",
+        },
+        {
+          icon: "mdi-heart",
+          title: "Favorites",
+          value: "favorites",
+        },
+        {
+          icon: "mdi-bell",
+          title: "Notifications",
+          value: "notifications",
+        },
+      ]
+    : [
+        {
+          icon: "mdi-home",
+          title: "Homepage",
+          value: "homepage",
+        },
+      ]
+);
+const clickHandler = () => {
+  if (isLogged.value) {
+    logoutHandler();
+  } else {
+    router.push("/login");
+  }
 };
 </script>
 
@@ -37,6 +53,7 @@ const logoutHandler = () => {
         @mouseleave="rail = true"
       >
         <v-list-item
+          v-if="isLogged"
           prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
           :class="rail ? '' : 'mt-3 mb-3'"
           title="Mitroi Daniela-Monica"
@@ -44,8 +61,8 @@ const logoutHandler = () => {
         >
         </v-list-item>
 
-        <v-divider color="ternary" />
-        <v-divider color="ternary" />
+        <v-divider v-if="isLogged" color="ternary" />
+        <v-divider v-if="isLogged" color="ternary" />
 
         <v-list density="compact" nav>
           <v-list-item
@@ -66,14 +83,14 @@ const logoutHandler = () => {
               block
               size="small"
               color="ternary"
-              @click="logoutHandler"
-              >Logout</v-btn
+              @click="clickHandler"
+              >{{ isLogged ? "Logout" : "Login" }}</v-btn
             >
             <v-list-item
               v-else
-              prepend-icon="mdi-logout"
-              title="Logout"
-              value="logout"
+              :prepend-icon="isLogged ? 'mdi-logout' : 'mdi-login'"
+              :title="isLogged ? 'Logout' : 'Login'"
+              :value="isLogged ? 'logout' : 'login'"
               class="custom-list-item"
             />
           </div>

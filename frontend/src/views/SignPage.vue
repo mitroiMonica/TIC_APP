@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { API_URL } from "@/config";
 import { toast } from "vue3-toastify";
 import router from "./../router/index.js";
+import userStore from "@/context/loggedUser.js";
 
 const valid = ref(false);
 const email = ref("");
@@ -64,6 +65,8 @@ const registerUser = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       localStorage.setItem("token", data.token);
+      const { token } = userStore();
+      token.value = data.token;
       router.push("/");
     }
   } catch (err) {

@@ -5,11 +5,11 @@ import TopNav from "./../components/TopNav.vue";
 </script>
 
 <template>
-  <DrawerNav class="hidden-sm-and-down">
-    <h1>Homepage</h1>
-  </DrawerNav>
   <TopNav class="hidden-md-and-up">
     <h1>Homepage</h1>
   </TopNav>
+  <DrawerNav class="hidden-sm-and-down">
+    <h1>Homepage</h1>
+  </DrawerNav>
   <BottomNav class="hidden-md-and-up" />
 </template>

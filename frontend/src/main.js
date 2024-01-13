@@ -17,6 +17,7 @@ app.use(vuetify);
 app.use(Vue3Toastify, {
   autoClose: 3000,
   position: "bottom-center",
+  theme: "colored",
 });
 
 app.mount("#app");

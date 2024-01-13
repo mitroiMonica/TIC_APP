@@ -1,21 +1,39 @@
 <script setup>
-const items = [
-  {
-    icon: "mdi-home",
-    title: "Homepage",
-    value: "homepage",
-  },
-  {
-    icon: "mdi-heart",
-    title: "Favorites",
-    value: "favorites",
-  },
-  {
-    icon: "mdi-bell",
-    title: "Notifications",
-    value: "notifications",
-  },
-];
+import { computed } from "vue";
+import userStore from "./../context/loggedUser.js";
+const { isLogged } = userStore();
+const items = computed(() =>
+  isLogged.value
+    ? [
+        {
+          icon: "mdi-home",
+          title: "Homepage",
+          value: "homepage",
+        },
+        {
+          icon: "mdi-heart",
+          title: "Favorites",
+          value: "favorites",
+        },
+        {
+          icon: "mdi-bell",
+          title: "Notifications",
+          value: "notifications",
+        },
+      ]
+    : [
+        {
+          icon: "mdi-home",
+          title: "Homepage",
+          value: "homepage",
+        },
+        {
+          icon: "mdi-login",
+          title: "Login",
+          value: "login",
+        },
+      ]
+);
 </script>
 
 <template>
