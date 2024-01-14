@@ -1,6 +1,6 @@
 <script setup>
 import userStore from "./../context/loggedUser.js";
-const { isLogged, logoutHandler } = userStore();
+const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
 </script>
 
 <template>
@@ -12,10 +12,14 @@ const { isLogged, logoutHandler } = userStore();
         >
         <v-spacer v-if="isLogged" />
         <v-avatar
-          v-if="isLogged"
-          image="https://randomuser.me/api/portraits/men/85.jpg"
+          v-if="isLogged && userData"
+          :image="userData.photo"
           class="avatar"
-        ></v-avatar>
+          @click="goToProfile(userId)"
+          color="ternary"
+        >
+          <span class="text">{{ userData.email[0] }}</span>
+        </v-avatar>
         <v-btn
           v-if="isLogged"
           @click="logoutHandler"

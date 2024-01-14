@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import SignPage from "./../views/SignPage.vue";
 import Homepage from "./../views/Homepage.vue";
 
 const router = createRouter({
@@ -8,14 +7,14 @@ const router = createRouter({
     {
       path: "/register",
       name: "register",
-      component: SignPage,
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("./../views/SignPage.vue"),
     },
     {
       path: "/login",
       name: "login",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("./../views/LoginPage.vue"),
     },
     {
@@ -32,6 +31,11 @@ const router = createRouter({
       path: "/notifications",
       name: "notifications",
       component: () => import("./../views/Notifications.vue"),
+    },
+    {
+      path: "/profile/:id",
+      name: "profile",
+      component: () => import("./../views/ProfilePage.vue"),
     },
   ],
 });

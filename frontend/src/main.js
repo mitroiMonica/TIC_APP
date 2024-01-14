@@ -16,7 +16,7 @@ app.use(router);
 app.use(vuetify);
 app.use(Vue3Toastify, {
   autoClose: 3000,
-  position: "bottom-center",
+  position: "bottom-right",
   theme: "colored",
 });
 

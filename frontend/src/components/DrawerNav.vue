@@ -4,7 +4,7 @@ import { ref, computed } from "vue";
 import router from "./../router/index.js";
 const drawer = ref(true);
 const rail = ref(true);
-const { isLogged, logoutHandler } = userStore();
+const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
 const items = computed(() =>
   isLogged.value
     ? [
@@ -53,12 +53,25 @@ const clickHandler = () => {
         @mouseleave="rail = true"
       >
         <v-list-item
-          v-if="isLogged"
-          prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-          :class="rail ? '' : 'mt-3 mb-3'"
-          title="Mitroi Daniela-Monica"
+          v-if="isLogged && userData"
+          :class="rail ? 'd-flex' : 'mt-3 mb-3 pa-3'"
           class="custom-list-item show-pointer"
-        >
+          @click="goToProfile(userId)"
+          ><v-avatar
+            v-if="isLogged && userData"
+            :image="userData.photo"
+            class="avatar"
+            @click="goToProfile(userId)"
+            color="ternary"
+            :size="rail ? '21' : '40'"
+          >
+            <span :class="rail ? 'text-caption' : 'text-h6'">{{
+              userData.email[0]
+            }}</span>
+          </v-avatar>
+          <span v-if="!rail" class="font-weight-bold">
+            {{ userData.email.split("@")[0] }}
+          </span>
         </v-list-item>
 
         <v-divider v-if="isLogged" color="ternary" />
