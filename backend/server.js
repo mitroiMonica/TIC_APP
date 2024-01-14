@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 
 import { userRouter } from "./routes/userRoutes.js";
+import { recipeRouter } from "./routes/recipeRoutes.js";
 
 dotenv.config({
   path: "./.env",
@@ -21,6 +22,7 @@ app.use(
 );
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/recipes", recipeRouter);
 
 app.use((error, request, response, next) => {
   response.status(error.statusCode || 500).json({

@@ -4,6 +4,8 @@ import { toast } from "vue3-toastify";
 import { API_URL } from "@/config";
 import UserDetails from "./../components/UserDetails.vue";
 import router from "@/router/index.js";
+import GeneralModal from "@/components/GeneralModal.vue";
+import RecipeForm from "@/components/RecipeForm.vue";
 const userId = router.currentRoute.value.params.id.split(":")[1];
 const userData = ref({});
 const getUserData = async () => {
@@ -30,6 +32,8 @@ getUserData();
 
 <template>
   <UserDetails :userData="userData">
-    <div>MIAU-RECIPES</div>
+    <GeneralModal title="Create Recipe">
+      <RecipeForm></RecipeForm>
+    </GeneralModal>
   </UserDetails>
 </template>
