@@ -4,8 +4,8 @@ import { toast } from "vue3-toastify";
 import { API_URL } from "@/config";
 import UserDetails from "./../components/UserDetails.vue";
 import router from "@/router/index.js";
-import GeneralModal from "@/components/GeneralModal.vue";
-import RecipeForm from "@/components/RecipeForm.vue";
+import GeneralModal from "@/components/recipes/RecipeModal.vue";
+import RecipeForm from "@/components/recipes/RecipeForm.vue";
 const userId = router.currentRoute.value.params.id.split(":")[1];
 const userData = ref({});
 const getUserData = async () => {

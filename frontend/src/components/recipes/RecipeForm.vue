@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { API_URL } from "@/config";
 import { toast } from "vue3-toastify";
-import router from "./../router/index.js";
+import router from "./../../router/index.js";
 import userStore from "@/context/loggedUser.js";
 const valid = ref(false);
 const name = ref("");
@@ -55,7 +55,7 @@ const loginUser = async () => {
 </script>
 
 <template>
-  <v-form v-model="valid" @submit.prevent class="pa-8">
+  <v-form v-model="valid" @submit.prevent class="pa-8 pb-4">
     <v-container>
       <v-row>
         <v-col cols="12" xs="12" sm="6" md="4">
@@ -146,11 +146,21 @@ const loginUser = async () => {
       </v-row>
     </v-container>
   </v-form>
+  <v-divider color="primary" />
+  <div class="py-6 px-2 button-align text-end">
+    <v-btn class="text-none" color="primary" rounded :disabled="!valid">
+      Create
+    </v-btn>
+  </div>
 </template>
 
 <style>
 .text {
   color: rgb(var(--v-theme-primary));
   align-self: center;
+}
+.button-align {
+  width: 50%;
+  display: inline-block;
 }
 </style>

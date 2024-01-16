@@ -2,7 +2,6 @@
 import { ref } from "vue";
 const props = defineProps({
   title: String,
-  customEvent: String,
 });
 const dialog = ref(false);
 </script>
@@ -26,22 +25,16 @@ const dialog = ref(false);
       </template>
       <v-divider color="primary" />
       <slot></slot>
-      <v-divider color="primary" />
-      <div class="d-flex justify-center align-center">
-        <div class="py-4 mx-2">
-          <v-btn class="text-none" color="primary" rounded> Create </v-btn>
-        </div>
-        <div class="py-4 mx-2">
-          <v-btn
-            class="text-none"
-            color="primary"
-            rounded
-            variant="outlined"
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-        </div>
+      <div class="py-6 px-2 button-align text-start">
+        <v-btn
+          class="text-none"
+          color="primary"
+          rounded
+          variant="outlined"
+          @click="dialog = false"
+        >
+          Close
+        </v-btn>
       </div>
     </v-card>
   </v-overlay>
@@ -60,5 +53,9 @@ const dialog = ref(false);
   width: 80vw;
   max-height: 90vh;
   overflow: auto;
+}
+.button-align {
+  width: 50%;
+  display: inline-block;
 }
 </style>
