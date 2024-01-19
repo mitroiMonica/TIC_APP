@@ -1,5 +1,6 @@
 <script setup>
 import userStore from "@/context/loggedUser.js";
+import { API_PHOTOS } from "@/config.js";
 const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
 </script>
 
@@ -13,12 +14,16 @@ const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
         <v-spacer v-if="isLogged" />
         <v-avatar
           v-if="isLogged && userData"
-          :image="userData.photo"
           class="avatar"
           @click="goToProfile(userId)"
           color="ternary"
         >
-          <span class="text">{{ userData.email[0] }}</span>
+          <v-img
+            v-if="userData.photo"
+            :src="`${API_PHOTOS}${userData.photo}`"
+            alt="user-photo"
+          />
+          <span v-else class="text">{{ userData.email[0] }}</span>
         </v-avatar>
         <v-btn
           v-if="isLogged"

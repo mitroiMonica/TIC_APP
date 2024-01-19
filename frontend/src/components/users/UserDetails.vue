@@ -1,5 +1,7 @@
 <script setup>
 import { API_PHOTOS } from "@/config.js";
+import PhotoModal from "./PhotoModal.vue";
+import { ref, computed } from "vue";
 const props = defineProps({
   userData: Object,
 });
@@ -17,6 +19,10 @@ const items = [
     number: 91,
   },
 ];
+const isOpen = { dialog: ref(false) };
+const openModal = () => {
+  isOpen.dialog.value = true;
+};
 </script>
 
 <template>
@@ -30,7 +36,12 @@ const items = [
       color="primary"
     >
       <div class="d-flex flex-column align-center">
-        <v-avatar size="80" color="ternary">
+        <v-avatar
+          size="80"
+          color="ternary"
+          class="avatar-container"
+          @click="openModal"
+        >
           <v-img
             v-if="userData.photo"
             :src="`${API_PHOTOS}${userData.photo}`"
@@ -51,6 +62,7 @@ const items = [
     <div class="ma-5">
       <slot></slot>
     </div>
+    <PhotoModal :isOpen="isOpen"></PhotoModal>
   </div>
 </template>
 
@@ -60,5 +72,8 @@ const items = [
 }
 .text {
   color: rgb(var(--v-theme-primary));
+}
+.avatar-container {
+  cursor: pointer;
 }
 </style>
