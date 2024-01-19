@@ -1,7 +1,8 @@
 <script setup>
-import userStore from "./../context/loggedUser.js";
+import { API_PHOTOS } from "@/config.js";
+import userStore from "@/context/loggedUser.js";
 import { ref, computed } from "vue";
-import router from "./../router/index.js";
+import router from "@/router/index.js";
 const drawer = ref(true);
 const rail = ref(true);
 const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
@@ -57,15 +58,20 @@ const clickHandler = () => {
           :class="rail ? 'd-flex' : 'mt-3 mb-3 pa-3'"
           class="custom-list-item show-pointer"
           @click="goToProfile(userId)"
-          ><v-avatar
+        >
+          <v-avatar
             v-if="isLogged && userData"
-            :image="userData.photo"
             class="avatar"
             @click="goToProfile(userId)"
             color="ternary"
             :size="rail ? '21' : '40'"
           >
-            <span :class="rail ? 'text-caption' : 'text-h6'">{{
+            <v-img
+              v-if="userData.photo"
+              :src="`${API_PHOTOS}${userData.photo}`"
+              alt="user-photo"
+            />
+            <span v-else :class="rail ? 'text-caption' : 'text-h6'">{{
               userData.email[0]
             }}</span>
           </v-avatar>

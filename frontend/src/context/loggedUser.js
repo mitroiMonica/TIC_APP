@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { toast } from "vue3-toastify";
 import jwt_decode from "jwt-decode";
 import router from "@/router/index.js";
-import { API_URL } from "@/config";
+import { API_URL } from "@/config.js";
 
 export const userStore = defineStore("loggedUser", () => {
   const token = ref(localStorage.getItem("token"));

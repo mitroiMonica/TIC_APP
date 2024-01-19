@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
 import { API_URL } from "@/config";
-import UserDetails from "./../components/UserDetails.vue";
+import UserDetails from "./../components/users/UserDetails.vue";
 import router from "@/router/index.js";
 import GeneralModal from "@/components/recipes/RecipeModal.vue";
 import RecipeForm from "@/components/recipes/RecipeForm.vue";

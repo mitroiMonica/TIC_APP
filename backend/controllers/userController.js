@@ -21,4 +21,20 @@ const getUserData = async (req, res, next) => {
   }
 };
 
-export { getUserData };
+const updateUser = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    const userRef = db.collection("Users").doc(userId);
+    await userRef.update({
+      photo: req.file.filename,
+    });
+    res.json({
+      status: "success",
+      message: "Photo successfully updated!",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { getUserData, updateUser };

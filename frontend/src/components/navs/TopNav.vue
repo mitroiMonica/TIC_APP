@@ -1,5 +1,5 @@
 <script setup>
-import userStore from "./../context/loggedUser.js";
+import userStore from "@/context/loggedUser.js";
 const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
 </script>
 

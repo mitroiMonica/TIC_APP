@@ -1,4 +1,5 @@
 <script setup>
+import { API_PHOTOS } from "@/config.js";
 const props = defineProps({
   userData: Object,
 });
@@ -30,7 +31,11 @@ const items = [
     >
       <div class="d-flex flex-column align-center">
         <v-avatar size="80" color="ternary">
-          <v-img v-if="userData.photo" :src="userData.photo" alt="user-photo" />
+          <v-img
+            v-if="userData.photo"
+            :src="`${API_PHOTOS}${userData.photo}`"
+            alt="user-photo"
+          />
           <span v-else class="text-h4 text">{{ userData.email[0] }}</span>
         </v-avatar>
         <span class="mt-3">{{ userData.email.split("@")[0] }} </span>

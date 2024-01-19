@@ -90,7 +90,8 @@ const protectRoutes = async (req, res, next) => {
     } else {
       throw new AppError("Not logged in!", 401);
     }
-    req.userID = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtDecoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = jwtDecoded.userId;
     next();
     // in order to protect better our route we can
     // 1. check if user still exists - or the payload is same with the user logged in
@@ -106,6 +107,9 @@ const protectRoutes = async (req, res, next) => {
       ].includes(err.message)
     ) {
       err.statusCode = 401;
+    }
+    if ("jwt expired" === err.message) {
+      err.message += ". Please login again.";
     }
     next(err);
   }

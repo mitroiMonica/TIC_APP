@@ -19,9 +19,9 @@ const createRecipe = async (req, res, next) => {
     if (
       !name ||
       !author ||
-      !date ||
       !author.email ||
       !author.id ||
+      !date ||
       !ingredients ||
       !preparation_method
     ) {
@@ -65,6 +65,7 @@ const createRecipe = async (req, res, next) => {
     res.status(201).json({
       status: "success",
       message: "Recipe successfully added",
+      recipe: newRecipe,
     });
   } catch (err) {
     next(err);

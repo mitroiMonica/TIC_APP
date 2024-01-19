@@ -1,7 +1,7 @@
 <script setup>
-import DrawerNav from "./../components/DrawerNav.vue";
-import BottomNav from "./../components/BottomNav.vue";
-import TopNav from "./../components/TopNav.vue";
+import DrawerNav from "./../components/navs/DrawerNav.vue";
+import BottomNav from "./../components/navs/BottomNav.vue";
+import TopNav from "./../components/navs/TopNav.vue";
 </script>
 
 <template>

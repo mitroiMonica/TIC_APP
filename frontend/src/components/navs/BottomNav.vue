@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import userStore from "./../context/loggedUser.js";
+import userStore from "@/context/loggedUser.js";
 const { isLogged } = userStore();
 const items = computed(() =>
   isLogged.value

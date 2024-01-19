@@ -12,6 +12,8 @@ dotenv.config({
 const PORT = process.env.PORT || 8081;
 const app = express();
 
+app.use(express.static("public")); //pentru imagini
+
 app.use(express.json()); //adauga body-ul cererii la obiectul request sub forma de JSON
 app.use(
   cors({
