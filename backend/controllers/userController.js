@@ -31,6 +31,7 @@ const updateUser = async (req, res, next) => {
     res.json({
       status: "success",
       message: "Photo successfully updated!",
+      filename: req.file.filename,
     });
   } catch (err) {
     next(err);

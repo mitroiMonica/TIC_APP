@@ -1,10 +1,13 @@
 <script setup>
 import { API_PHOTOS } from "@/config.js";
 import PhotoModal from "./PhotoModal.vue";
-import { ref, computed } from "vue";
+import { ref } from "vue";
+
 const props = defineProps({
   userData: Object,
+  isLoggedUser: Boolean,
 });
+const userData = props.userData;
 const items = [
   {
     title: "Recipes",
@@ -27,7 +30,7 @@ const openModal = () => {
 
 <template>
   <div
-    v-if="Object.keys(userData).length !== 0"
+    v-if="userData && Object.keys(userData).length !== 0"
     class="d-flex flex-md-row flex-column details-container"
   >
     <v-sheet
@@ -39,7 +42,7 @@ const openModal = () => {
         <v-avatar
           size="80"
           color="ternary"
-          class="avatar-container"
+          :class="isLoggedUser ? 'avatar-container' : ''"
           @click="openModal"
         >
           <v-img
@@ -60,9 +63,10 @@ const openModal = () => {
       </div>
     </v-sheet>
     <div class="ma-5">
-      <slot></slot>
+      <slot v-if="isLoggedUser"></slot>
     </div>
-    <PhotoModal :isOpen="isOpen"></PhotoModal>
+    <PhotoModal :isOpen="isOpen" v-if="isLoggedUser"></PhotoModal>
+    {{ userData }}
   </div>
 </template>
 

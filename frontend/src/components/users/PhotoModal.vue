@@ -1,5 +1,10 @@
 <script setup>
 import { ref, watch } from "vue";
+import { userStore } from "@/context/loggedUser.js";
+import { toast } from "vue3-toastify";
+import { API_URL } from "@/config.js";
+
+const { token, userData } = userStore();
 const props = defineProps({
   isOpen: Object,
 });
@@ -32,8 +37,29 @@ watch(picture, () => {
     valid.value = false;
   }
 });
-const saveNewPhoto = () => {
-  console.log("IA");
+const saveNewPhoto = async () => {
+  try {
+    const formData = new FormData();
+    formData.append("photo", picture.value[0]);
+    const response = await fetch(`${API_URL}/users/updatePhoto`, {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + token.value,
+      },
+      body: formData,
+      credentials: "include",
+    });
+    const data = await response.json();
+    if (data.status === "fail") {
+      toast.error(data.message);
+    } else if (data.status === "success") {
+      toast.success(data.message);
+      userData.value = { ...userData.value, photo: data.filename };
+      closeModal();
+    }
+  } catch (err) {
+    toast.error(err.message);
+  }
 };
 </script>
 
