@@ -25,9 +25,13 @@ const updateUser = async (req, res, next) => {
   try {
     const userId = req.userId;
     const userRef = db.collection("Users").doc(userId);
-    await userRef.update({
-      photo: req.file.filename,
-    });
+    if (req.file) {
+      await userRef.update({
+        photo: req.file.filename,
+      });
+    } else {
+      throw new AppError("No file attached", 400);
+    }
     res.json({
       status: "success",
       message: "Photo successfully updated!",

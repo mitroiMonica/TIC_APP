@@ -4,12 +4,16 @@ import {
   createRecipe,
   getAllRecipes,
 } from "../controllers/recipeController.js";
+import {
+  resizeUserPhoto,
+  updateMiddleware,
+} from "./../controllers/photoController.js";
 
 const router = express.Router();
 
 router.get("/", getAllRecipes);
 
 router.use(protectRoutes);
-router.post("/", createRecipe);
+router.post("/", updateMiddleware, resizeUserPhoto, createRecipe);
 
 export { router as recipeRouter };

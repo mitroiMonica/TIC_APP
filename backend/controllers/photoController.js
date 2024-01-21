@@ -20,14 +20,29 @@ const upload = multer({
 const updateMiddleware = upload.single("photo");
 
 const resizeUserPhoto = (req, res, next) => {
-  if (req.file) {
-    const extension = req.file.mimetype.split("/")[1];
-    req.file.filename = `user-${req.userId}-${Date.now()}.${extension}`;
-    sharp(req.file.buffer)
-      .resize(500, 500)
-      .toFile(`public/img/users/${req.file.filename}`);
+  try {
+    if (req.file) {
+      let path = "";
+      if (req.baseUrl.includes("users")) {
+        path = "user";
+      } else if (req.baseUrl.includes("recipes")) {
+        path = "recipe";
+      } else {
+        throw new AppError(
+          "Image upload is not allowed with this request",
+          400
+        );
+      }
+      const extension = req.file.mimetype.split("/")[1];
+      req.file.filename = `${path}-${req.userId}-${Date.now()}.${extension}`;
+      sharp(req.file.buffer)
+        .resize(500, 500)
+        .toFile(`public/img/${path}s/${req.file.filename}`);
+    }
+    next();
+  } catch (err) {
+    next(err);
   }
-  next();
 };
 
 export { updateMiddleware, resizeUserPhoto };

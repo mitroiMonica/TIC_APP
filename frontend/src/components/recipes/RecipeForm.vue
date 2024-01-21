@@ -4,7 +4,7 @@ import { API_URL } from "@/config";
 import { toast } from "vue3-toastify";
 import userStore from "@/context/loggedUser.js";
 
-const { userId, userData, token } = userStore();
+const { token } = userStore();
 const valid = ref(false);
 const name = ref(undefined);
 const picture = ref(undefined);
@@ -27,40 +27,47 @@ const pictureRule = [
     return true;
   },
 ];
+const clearFileds = () => {
+  name.value = undefined;
+  picture.value = undefined;
+  category.value = undefined;
+  preparation_time.value = undefined;
+  no_servings.value = undefined;
+  calories.value = undefined;
+  tags.value = undefined;
+  ingredients.value = undefined;
+  preparation_method.value = undefined;
+};
 const createRecipe = async () => {
   try {
-    const recipeBody = {
-      name: name.value,
-      author: {
-        email: userData.value.email,
-        id: userId.value,
-      },
-      date: Date.now(),
-      ingredients: ingredients.value.split(",").map((el) => el.trim()),
-      preparation_method: preparation_method.value,
-    };
+    const formData = new FormData();
+    formData.append("name", name.value);
+    formData.append("ingredients", ingredients.value);
+    formData.append("preparation_method", preparation_method.value);
     if (category.value) {
-      recipeBody["category"] = category.value;
+      formData.append("category", category.value);
     }
     if (preparation_time.value) {
-      recipeBody["preparation_time"] = preparation_time.value;
+      formData.append("preparation_time", preparation_time.value);
     }
     if (no_servings.value) {
-      recipeBody["no_servings"] = no_servings.value;
+      formData.append("no_servings", no_servings.value);
     }
     if (calories.value) {
-      recipeBody["calories"] = calories.value;
+      formData.append("calories", calories.value);
     }
     if (tags.value) {
-      recipeBody["tags"] = tags.value;
+      formData.append("tags", tags.value);
+    }
+    if (picture.value) {
+      formData.append("photo", picture.value[0]);
     }
     const response = await fetch(`${API_URL}/recipes`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: "Bearer " + token.value,
       },
-      body: JSON.stringify(recipeBody),
+      body: formData,
       credentials: "include",
     });
     const data = await response.json();
@@ -68,15 +75,7 @@ const createRecipe = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       toast.success(data.message);
-      name.value = undefined;
-      picture.value = undefined;
-      category.value = undefined;
-      preparation_time.value = undefined;
-      no_servings.value = undefined;
-      calories.value = undefined;
-      tags.value = undefined;
-      ingredients.value = undefined;
-      preparation_method.value = undefined;
+      clearFileds();
     }
   } catch (err) {
     toast.error(err.message);
