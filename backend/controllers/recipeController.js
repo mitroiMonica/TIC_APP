@@ -3,19 +3,25 @@ import db from "./../database/firestore.js";
 
 const getAllRecipes = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    if (!userId) {
-      throw new AppError("User id must be provided!", 400);
-    }
-    const userRef = db.collection("Users").doc(userId);
-    const user = await userRef.get();
-    if (!user.exists) {
-      throw new AppError("No user with such id", 400);
+    const recipeRef = db.collection("Recipes");
+    let recipesSnapshot;
+    if (req.query.userId) {
+      recipesSnapshot = await recipeRef
+        .where("author.id", "!=", req.query.userId)
+        .get();
     } else {
-      const userData = user.data();
-      userData["password"] = undefined;
-      res.json({ status: "success", userData });
+      recipesSnapshot = await recipeRef.get();
     }
+    if (recipesSnapshot.empty) {
+      throw new AppError("No recipes", 400);
+    }
+    const recipes = [];
+    recipesSnapshot.forEach((recipe) => recipes.push(recipe.data()));
+    res.json({
+      status: "success",
+      noRecipes: recipes.length,
+      recipes,
+    });
   } catch (err) {
     next(err);
   }

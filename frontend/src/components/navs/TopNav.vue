@@ -20,7 +20,7 @@ const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
         >
           <v-img
             v-if="userData.photo"
-            :src="`${API_PHOTOS}${userData.photo}`"
+            :src="`${API_PHOTOS}/users/${userData.photo}`"
             alt="user-photo"
           />
           <span v-else class="text">{{ userData.email[0] }}</span>

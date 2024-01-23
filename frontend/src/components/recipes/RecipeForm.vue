@@ -99,6 +99,7 @@ const createRecipe = async () => {
 
         <v-col cols="12" xs="12" sm="6" md="4">
           <v-file-input
+            style="overflow: auto"
             v-model="picture"
             label="Picture"
             :rules="pictureRule"

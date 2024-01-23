@@ -36,7 +36,7 @@ const resizeUserPhoto = (req, res, next) => {
       const extension = req.file.mimetype.split("/")[1];
       req.file.filename = `${path}-${req.userId}-${Date.now()}.${extension}`;
       sharp(req.file.buffer)
-        .resize(500, 500)
+        .resize(path === "user" ? 500 : 800, 500)
         .toFile(`public/img/${path}s/${req.file.filename}`);
     }
     next();
