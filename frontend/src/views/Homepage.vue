@@ -2,15 +2,15 @@
 import DrawerNav from "./../components/navs/DrawerNav.vue";
 import BottomNav from "./../components/navs/BottomNav.vue";
 import TopNav from "./../components/navs/TopNav.vue";
-import RecipeCard from "@/components/recipes/RecipeCard.vue";
+import RecipeCards from "@/components/recipes/RecipeCards.vue";
 </script>
 
 <template>
   <TopNav class="hidden-md-and-up">
-    <RecipeCard></RecipeCard>
+    <RecipeCards :isHomepage="true"></RecipeCards>
   </TopNav>
   <DrawerNav class="hidden-sm-and-down">
-    <RecipeCard></RecipeCard>
+    <RecipeCards :isHomepage="true"></RecipeCards>
   </DrawerNav>
   <BottomNav class="hidden-md-and-up" />
 </template>

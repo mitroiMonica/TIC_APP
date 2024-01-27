@@ -4,7 +4,11 @@ import {
   protectRoutes,
   register,
 } from "./../controllers/authController.js";
-import { getUserData, updateUser } from "./../controllers/userController.js";
+import {
+  changeFavoriteRecipes,
+  getUserData,
+  updateUser,
+} from "./../controllers/userController.js";
 import {
   resizeUserPhoto,
   updateMiddleware,
@@ -19,5 +23,6 @@ router.get("/:id", getUserData);
 router.use(protectRoutes);
 
 router.patch("/updatePhoto", updateMiddleware, resizeUserPhoto, updateUser);
+router.patch("/favorites", changeFavoriteRecipes);
 
 export { router as userRouter };

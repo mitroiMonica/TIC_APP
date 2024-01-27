@@ -3,6 +3,7 @@ import { protectRoutes } from "../controllers/authController.js";
 import {
   createRecipe,
   getAllRecipes,
+  getUserRecipes,
 } from "../controllers/recipeController.js";
 import {
   resizeUserPhoto,
@@ -12,6 +13,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllRecipes);
+router.get("/user/:id", getUserRecipes);
 
 router.use(protectRoutes);
 router.post("/", updateMiddleware, resizeUserPhoto, createRecipe);

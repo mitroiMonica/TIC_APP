@@ -27,6 +27,7 @@ const register = async (req, res, next) => {
     const newUser = {
       email,
       password: await bcrypt.hash(password, 10),
+      favorites: [],
     };
     const user = await userRef.add(newUser);
     const token = createToken({

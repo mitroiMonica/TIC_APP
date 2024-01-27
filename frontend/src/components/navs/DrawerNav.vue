@@ -43,81 +43,79 @@ const clickHandler = () => {
 </script>
 
 <template>
-  <v-card>
-    <v-layout>
-      <v-navigation-drawer
-        class="nav-container"
-        v-model="drawer"
-        :rail="rail"
-        permanent
-        @mouseenter="rail = false"
-        @mouseleave="rail = true"
+  <v-layout>
+    <v-navigation-drawer
+      class="nav-container"
+      v-model="drawer"
+      :rail="rail"
+      permanent
+      @mouseenter="rail = false"
+      @mouseleave="rail = true"
+    >
+      <v-list-item
+        v-if="isLogged && userData"
+        :class="rail ? 'd-flex' : 'mt-3 mb-3 pa-3'"
+        class="custom-list-item show-pointer"
+        @click="goToProfile(userId)"
       >
-        <v-list-item
+        <v-avatar
           v-if="isLogged && userData"
-          :class="rail ? 'd-flex' : 'mt-3 mb-3 pa-3'"
-          class="custom-list-item show-pointer"
+          class="avatar"
           @click="goToProfile(userId)"
+          color="ternary"
+          :size="rail ? '21' : '40'"
         >
-          <v-avatar
-            v-if="isLogged && userData"
-            class="avatar"
-            @click="goToProfile(userId)"
+          <v-img
+            v-if="userData.photo"
+            :src="`${API_PHOTOS}/users/${userData.photo}`"
+            alt="user-photo"
+          />
+          <span v-else :class="rail ? 'text-caption' : 'text-h6'">{{
+            userData.email[0]
+          }}</span>
+        </v-avatar>
+        <span v-if="!rail" class="font-weight-bold">
+          {{ userData.email.split("@")[0] }}
+        </span>
+      </v-list-item>
+
+      <v-divider v-if="isLogged" color="ternary" />
+      <v-divider v-if="isLogged" color="ternary" />
+
+      <v-list density="compact" nav>
+        <v-list-item
+          v-for="item in items"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :value="item.value"
+          :key="item.value"
+          class="custom-list-item"
+          :to="item.value === 'homepage' ? '/' : `/${item.value}`"
+        ></v-list-item>
+      </v-list>
+
+      <template v-slot:append>
+        <div :class="rail ? 'mb-1' : 'ma-3'">
+          <v-btn
+            v-if="!rail"
+            block
+            size="small"
             color="ternary"
-            :size="rail ? '21' : '40'"
+            @click="clickHandler"
+            >{{ isLogged ? "Logout" : "Login" }}</v-btn
           >
-            <v-img
-              v-if="userData.photo"
-              :src="`${API_PHOTOS}/users/${userData.photo}`"
-              alt="user-photo"
-            />
-            <span v-else :class="rail ? 'text-caption' : 'text-h6'">{{
-              userData.email[0]
-            }}</span>
-          </v-avatar>
-          <span v-if="!rail" class="font-weight-bold">
-            {{ userData.email.split("@")[0] }}
-          </span>
-        </v-list-item>
-
-        <v-divider v-if="isLogged" color="ternary" />
-        <v-divider v-if="isLogged" color="ternary" />
-
-        <v-list density="compact" nav>
           <v-list-item
-            v-for="item in items"
-            :prepend-icon="item.icon"
-            :title="item.title"
-            :value="item.value"
-            :key="item.value"
+            v-else
+            :prepend-icon="isLogged ? 'mdi-logout' : 'mdi-login'"
+            :title="isLogged ? 'Logout' : 'Login'"
+            :value="isLogged ? 'logout' : 'login'"
             class="custom-list-item"
-            :to="item.value === 'homepage' ? '/' : `/${item.value}`"
-          ></v-list-item>
-        </v-list>
-
-        <template v-slot:append>
-          <div :class="rail ? 'mb-1' : 'ma-3'">
-            <v-btn
-              v-if="!rail"
-              block
-              size="small"
-              color="ternary"
-              @click="clickHandler"
-              >{{ isLogged ? "Logout" : "Login" }}</v-btn
-            >
-            <v-list-item
-              v-else
-              :prepend-icon="isLogged ? 'mdi-logout' : 'mdi-login'"
-              :title="isLogged ? 'Logout' : 'Login'"
-              :value="isLogged ? 'logout' : 'login'"
-              class="custom-list-item"
-            />
-          </div>
-        </template>
-      </v-navigation-drawer>
-      <v-main><slot></slot></v-main>
-    </v-layout>
-  </v-card>
+          />
+        </div>
+      </template>
+    </v-navigation-drawer>
+    <v-main><slot></slot></v-main>
+  </v-layout>
 </template>
 
 <style>

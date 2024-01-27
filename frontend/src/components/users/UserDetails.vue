@@ -15,7 +15,7 @@ const items = [
   },
   {
     title: "Likes",
-    number: 1320,
+    number: 199,
   },
   {
     title: "Liked",
@@ -62,11 +62,10 @@ const openModal = () => {
         </div>
       </div>
     </v-sheet>
-    <div class="ma-5">
-      <slot v-if="isLoggedUser"></slot>
+    <div class="recipes-container">
+      <slot></slot>
     </div>
     <PhotoModal :isOpen="isOpen" v-if="isLoggedUser"></PhotoModal>
-    {{ userData }}
   </div>
 </template>
 
@@ -79,5 +78,8 @@ const openModal = () => {
 }
 .avatar-container {
   cursor: pointer;
+}
+.recipes-container {
+  width: 100%;
 }
 </style>

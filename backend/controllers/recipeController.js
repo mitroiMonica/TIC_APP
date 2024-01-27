@@ -16,7 +16,26 @@ const getAllRecipes = async (req, res, next) => {
       throw new AppError("No recipes", 400);
     }
     const recipes = [];
-    recipesSnapshot.forEach((recipe) => recipes.push(recipe.data()));
+    let userFavoritesRecipes = undefined;
+    if (req.query.userId) {
+      const userRef = db.collection("Users").doc(req.query.userId);
+      const user = await userRef.get();
+      if (user.exists) {
+        userFavoritesRecipes = user.data().favorites;
+      }
+    }
+    recipesSnapshot.forEach((recipe) => {
+      const newRecipe = {
+        id: recipe.id,
+        ...recipe.data(),
+      };
+      if (userFavoritesRecipes && userFavoritesRecipes.length !== 0) {
+        if (userFavoritesRecipes.includes(newRecipe.id)) {
+          newRecipe["isFavorite"] = true;
+        }
+      }
+      recipes.push(newRecipe);
+    });
     res.json({
       status: "success",
       noRecipes: recipes.length,
@@ -86,4 +105,28 @@ const createRecipe = async (req, res, next) => {
   }
 };
 
-export { createRecipe, getAllRecipes };
+const getUserRecipes = async (req, res, next) => {
+  try {
+    const recipeRef = db.collection("Recipes");
+    const recipesSnapshot = await recipeRef
+      .where("author.id", "==", req.params.id)
+      .get();
+    const userRecipes = [];
+    recipesSnapshot.forEach((recipe) => {
+      const newRecipe = {
+        id: recipe.id,
+        ...recipe.data(),
+      };
+      userRecipes.push(newRecipe);
+    });
+    res.json({
+      status: "success",
+      noRecipes: userRecipes.length,
+      recipes: userRecipes,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { createRecipe, getAllRecipes, getUserRecipes };
