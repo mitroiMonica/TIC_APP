@@ -74,6 +74,8 @@ const openModal = () => {
 <style>
 .details-container {
   height: 100vh;
+  position: sticky;
+  left: 0;
 }
 .text {
   color: rgb(var(--v-theme-primary));

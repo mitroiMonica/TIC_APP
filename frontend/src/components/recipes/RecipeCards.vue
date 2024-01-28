@@ -20,30 +20,6 @@ const sorted = ref({
 });
 const dateIcon = ref("mdi-clock-outline");
 const likeIcon = ref("mdi-heart-outline");
-const sortRecipesByDate = () => {
-  if (sorted.value.byDate === "") {
-    sorted.value.byDate = "asc";
-    dateIcon.value = "mdi-sort-clock-ascending";
-  } else if (sorted.value.byDate === "asc") {
-    sorted.value.byDate = "desc";
-    dateIcon.value = "mdi-sort-clock-descending";
-  } else {
-    sorted.value.byDate = "";
-    dateIcon.value = "mdi-clock-outline";
-  }
-};
-const sortRecipesByLikes = () => {
-  if (sorted.value.byLikes === "") {
-    sorted.value.byLikes = "asc";
-    likeIcon.value = "mdi-heart-circle-outline";
-  } else if (sorted.value.byLikes === "asc") {
-    sorted.value.byLikes = "desc";
-    likeIcon.value = "mdi-heart-circle";
-  } else {
-    sorted.value.byLikes = "";
-    likeIcon.value = "mdi-heart-outline";
-  }
-};
 let recipes = ref([]);
 const getRecipes = async () => {
   try {
@@ -104,8 +80,10 @@ const changeFavorites = async (id) => {
         .filter((recipe) => recipe.id === id)
         .map((recipe) => {
           if (data.favorites.includes(recipe.id)) {
+            userData.value.no_favorites += 1;
             return (recipe.isFavorite = true);
           } else {
+            userData.value.no_favorites -= 1;
             return (recipe.isFavorite = false);
           }
         });
@@ -120,7 +98,48 @@ const goToProfile = (id) => {
     router.push("/profile/:" + id);
   }
 };
-const isOpen = computed(() => dialog);
+const resetIcons = (name, icon, mdiIcon) => {
+  if (sorted.value[name] !== "") {
+    sorted.value[name] = "";
+    icon.value = mdiIcon;
+  }
+};
+const sortRecipesByDate = () => {
+  if (sorted.value.byDate === "") {
+    sorted.value.byDate = "asc";
+    dateIcon.value = "mdi-sort-clock-ascending";
+    recipes.value.sort(
+      (r1, r2) => r1.ingredients.length - r2.ingredients.length
+    );
+    resetIcons("byLikes", likeIcon, "mdi-heart-outline");
+  } else if (sorted.value.byDate === "asc") {
+    sorted.value.byDate = "desc";
+    dateIcon.value = "mdi-sort-clock-descending";
+    recipes.value.sort(
+      (r1, r2) => r2.ingredients.length - r1.ingredients.length
+    );
+  } else {
+    sorted.value.byDate = "";
+    dateIcon.value = "mdi-clock-outline";
+    recipes.value.sort((r1, r2) => r2.date - r1.date);
+  }
+};
+const sortRecipesByLikes = () => {
+  if (sorted.value.byLikes === "") {
+    sorted.value.byLikes = "asc";
+    likeIcon.value = "mdi-heart-circle-outline";
+    recipes.value.sort((r1, r2) => r1.no_likes - r2.no_likes);
+    resetIcons("byDate", dateIcon, "mdi-clock-outline");
+  } else if (sorted.value.byLikes === "asc") {
+    sorted.value.byLikes = "desc";
+    likeIcon.value = "mdi-heart-circle";
+    recipes.value.sort((r1, r2) => r2.no_likes - r1.no_likes);
+  } else {
+    sorted.value.byLikes = "";
+    likeIcon.value = "mdi-heart-outline";
+    recipes.value.sort((r1, r2) => r2.date - r1.date);
+  }
+};
 </script>
 
 <template>
@@ -145,16 +164,16 @@ const isOpen = computed(() => dialog);
           size="x-large"
           density="compact"
           color="primary"
-          :icon="dateIcon"
-          @click="sortRecipesByDate"
+          :icon="likeIcon"
+          @click="sortRecipesByLikes"
         >
         </v-btn>
         <v-btn
           size="x-large"
           density="compact"
           color="primary"
-          :icon="likeIcon"
-          @click="sortRecipesByLikes"
+          :icon="dateIcon"
+          @click="sortRecipesByDate"
         >
         </v-btn>
       </v-toolbar>

@@ -1,10 +1,44 @@
 <script setup>
+import { API_URL } from "@/config.js";
+import { toast } from "vue3-toastify";
+import userStore from "@/context/loggedUser.js";
+
+const { token } = userStore();
 const props = defineProps({
   title: String,
   isOpen: Object,
   isEditing: Boolean,
+  recipeEditedId: String,
 });
 const isOpen = props.isOpen;
+const buttonHandler = async () => {
+  if (props.isEditing) {
+    try {
+      const response = await fetch(`${API_URL}/recipes`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token.value,
+        },
+        body: JSON.stringify({
+          recipeId: props.recipeEditedId,
+        }),
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (data.status === "fail") {
+        toast.error(data.message);
+      } else if (data.status === "success") {
+        toast.success(data.message);
+        isOpen.value = false;
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  } else {
+    isOpen.value = false;
+  }
+};
 </script>
 
 <template>
@@ -29,7 +63,7 @@ const isOpen = props.isOpen;
           :color="isEditing ? 'red' : 'primary'"
           rounded
           :variant="isEditing ? 'tonal' : 'outlined'"
-          @click="isOpen = false"
+          @click="buttonHandler"
         >
           {{ isEditing ? "Delete" : "Close" }}
         </v-btn>

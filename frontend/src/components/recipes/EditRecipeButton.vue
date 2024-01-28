@@ -20,7 +20,11 @@ const isOpen = computed(() => dialog);
     @click="dialog = !dialog"
     ><v-icon color="primary"> mdi-file-edit-outline </v-icon>
   </v-btn>
-  <RecipeModal :isOpen="isOpen" title="Edit Recipe" :isEditing="true"
+  <RecipeModal
+    :isOpen="isOpen"
+    title="Edit Recipe"
+    :isEditing="true"
+    :recipeEditedId="recipeData.id"
     ><RecipeForm :isEditing="true" :recipeEdited="recipeData"></RecipeForm
   ></RecipeModal>
 </template>

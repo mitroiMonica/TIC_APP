@@ -4,14 +4,7 @@ import db from "./../database/firestore.js";
 const getAllRecipes = async (req, res, next) => {
   try {
     const recipeRef = db.collection("Recipes");
-    let recipesSnapshot;
-    if (req.query.userId) {
-      recipesSnapshot = await recipeRef
-        .where("author.id", "!=", req.query.userId)
-        .get();
-    } else {
-      recipesSnapshot = await recipeRef.get();
-    }
+    let recipesSnapshot = await recipeRef.orderBy("date", "desc").get();
     if (recipesSnapshot.empty) {
       throw new AppError("No recipes", 400);
     }
@@ -25,6 +18,9 @@ const getAllRecipes = async (req, res, next) => {
       }
     }
     recipesSnapshot.forEach((recipe) => {
+      if (req.query.userId && recipe.data().author.id === req.query.userId) {
+        return;
+      }
       const newRecipe = {
         id: recipe.id,
         ...recipe.data(),
@@ -110,7 +106,9 @@ const getUserRecipes = async (req, res, next) => {
   try {
     const recipeRef = db.collection("Recipes");
     const recipesSnapshot = await recipeRef
-      .where("author.id", "==", req.params.id)
+      // .where("author.id", "==", req.params.id)
+      // limitare Firebase - where si orderBy trebuie facute pe acelasi camp
+      .orderBy("date", "desc")
       .get();
     let favorites;
     if (req.query.loggedUserId) {
@@ -122,6 +120,9 @@ const getUserRecipes = async (req, res, next) => {
     }
     const userRecipes = [];
     recipesSnapshot.forEach((recipe) => {
+      if (recipe.data().author.id !== req.params.id) {
+        return;
+      }
       const newRecipe = {
         id: recipe.id,
         ...recipe.data(),
@@ -143,4 +144,27 @@ const getUserRecipes = async (req, res, next) => {
   }
 };
 
-export { createRecipe, getAllRecipes, getUserRecipes };
+const deleteRecipe = async (req, res, next) => {
+  try {
+    if (!req.body.recipeId) {
+      throw new AppError("Recipe id must be provided");
+    }
+    const recipeRef = db.collection("Recipes").doc(req.body.recipeId);
+    const recipe = await recipeRef.get();
+    if (!recipe.exists) {
+      throw new AppError("Invalid recipe!");
+    }
+    if (recipe.data().author.id !== req.userId) {
+      throw new AppError("You can only delete your own recipes");
+    }
+    await recipeRef.delete();
+    res.json({
+      status: "success",
+      message: "Recipe successfully deleted",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export { createRecipe, getAllRecipes, getUserRecipes, deleteRecipe };
