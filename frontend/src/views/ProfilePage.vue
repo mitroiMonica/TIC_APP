@@ -4,10 +4,9 @@ import { toast } from "vue3-toastify";
 import { API_URL } from "@/config";
 import UserDetails from "./../components/users/UserDetails.vue";
 import router from "@/router/index.js";
-import GeneralModal from "@/components/recipes/RecipeModal.vue";
-import RecipeForm from "@/components/recipes/RecipeForm.vue";
 import { userStore } from "@/context/loggedUser.js";
 import RecipeCards from "@/components/recipes/RecipeCards.vue";
+import FloatingButton from "@/components/recipes/FloatingButton.vue";
 
 const { userId, userData } = userStore();
 const userIdParam = router.currentRoute.value.params.id.split(":")[1];
@@ -47,9 +46,7 @@ if (userIdParam === userId.value) {
 
 <template>
   <UserDetails :userData="searchUserData" :isLoggedUser="isLoggedUser">
-    <RecipeCards :areUserRecipes="true"></RecipeCards>
-    <GeneralModal title="Create Recipe">
-      <RecipeForm></RecipeForm>
-    </GeneralModal>
+    <RecipeCards :areUserRecipes="true" />
+    <FloatingButton v-if="userIdParam === userId" />
   </UserDetails>
 </template>

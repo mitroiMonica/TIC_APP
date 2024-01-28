@@ -1,11 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { toast } from "vue3-toastify";
 import { API_URL, API_PHOTOS } from "@/config.js";
 import { userStore } from "@/context/loggedUser.js";
 import router from "@/router/index.js";
+import EditRecipeButton from "./EditRecipeButton.vue";
 
 const { userId, userData, token, isLogged } = userStore();
+const dialog = ref([]);
 const props = defineProps({
   isHomepage: Boolean,
   areFavorites: Boolean,
@@ -51,6 +53,9 @@ const getRecipes = async () => {
     } else if (props.areUserRecipes) {
       const userIdParam = router.currentRoute.value.params.id.split(":")[1];
       url += `/user/${userIdParam}`;
+      if (userId.value) {
+        url += `?loggedUserId=${userId.value}`;
+      }
     }
     const response = await fetch(url, {
       method: "GET",
@@ -115,6 +120,7 @@ const goToProfile = (id) => {
     router.push("/profile/:" + id);
   }
 };
+const isOpen = computed(() => dialog);
 </script>
 
 <template>
@@ -158,8 +164,8 @@ const goToProfile = (id) => {
       <v-container class="pa-8" fluid>
         <v-row>
           <v-col
-            v-for="item in items"
-            :key="item.raw.id"
+            v-for="item in recipes"
+            :key="item.id"
             cols="12"
             lg="3"
             md="4"
@@ -170,60 +176,58 @@ const goToProfile = (id) => {
             <v-card class="pb-3" elevation="3">
               <v-img
                 :src="
-                  item.raw.picture
-                    ? `${API_PHOTOS}/recipes/${item.raw.picture}`
-                    : ''
+                  item.picture ? `${API_PHOTOS}/recipes/${item.picture}` : ''
                 "
               >
                 <v-btn
-                  v-if="isLogged && !areUserRecipes"
-                  class="justify-center ma-2"
-                  style="float: right"
-                  size="large"
-                  icon=""
-                  density="comfortable"
-                  @click="changeFavorites(item.raw.id)"
-                >
-                  <v-icon :color="item.raw.isFavorite ? 'red' : '#ced4da'">
-                    mdi-heart
-                  </v-icon>
-                </v-btn>
-                <v-btn
                   v-if="
-                    areUserRecipes &&
-                    userId == router.currentRoute.value.params.id.split(':')[1]
+                    (isLogged && !areUserRecipes) ||
+                    (isLogged &&
+                      areUserRecipes &&
+                      userId !==
+                        router.currentRoute.value.params.id.split(':')[1])
                   "
                   class="justify-center ma-2"
                   style="float: right"
                   size="large"
                   icon=""
                   density="comfortable"
-                  @click=""
-                  ><v-icon color="primary"> mdi-file-edit-outline </v-icon>
+                  @click="changeFavorites(item.id)"
+                >
+                  <v-icon :color="item.isFavorite ? 'red' : '#ced4da'">
+                    mdi-heart
+                  </v-icon>
                 </v-btn>
+                <EditRecipeButton
+                  v-if="
+                    areUserRecipes &&
+                    router.currentRoute.value.params.id.split(':')[1] === userId
+                  "
+                  :recipeData="item"
+                ></EditRecipeButton>
               </v-img>
               <v-list-item class="my-2">
                 <template v-slot:title>
                   <span
                     class="text-h6 font-weight-bold"
                     style="color: rgb(var(--v-theme-primary))"
-                    >{{ item.raw.name }}</span
+                    >{{ item.name }}</span
                   >
                 </template>
                 <template v-slot:subtitle>
                   <div
                     class="text-caption"
                     style="cursor: pointer"
-                    @click="goToProfile(item.raw.author.id)"
+                    @click="goToProfile(item.author.id)"
                   >
-                    by {{ item.raw.author.email }}
+                    by {{ item.author.email }}
                   </div>
                 </template>
                 <template v-slot:default>
                   <div
                     class="my-4 text-body-2 truncate-text text-justify text-medium-emphasis font-italic"
                   >
-                    {{ item.raw.preparation_method }}
+                    {{ item.preparation_method }}
                   </div>
                 </template>
               </v-list-item>
@@ -237,7 +241,7 @@ const goToProfile = (id) => {
                     class="text-truncate"
                     style="color: rgb(var(--v-theme-primary))"
                   >
-                    {{ item.raw.preparation_time }}
+                    {{ item.preparation_time ? item.preparation_time : "-" }}
                   </div>
                 </div>
 

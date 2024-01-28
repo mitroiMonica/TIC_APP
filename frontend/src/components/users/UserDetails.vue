@@ -11,15 +11,15 @@ const userData = props.userData;
 const items = [
   {
     title: "Recipes",
-    number: 100,
+    property: "no_recipes",
   },
   {
     title: "Likes",
-    number: 199,
+    property: "total_likes",
   },
   {
     title: "Liked",
-    number: 91,
+    property: "no_favorites",
   },
 ];
 const isOpen = { dialog: ref(false) };
@@ -57,7 +57,9 @@ const openModal = () => {
       </div>
       <div class="d-flex flex-md-column flex-row align-center">
         <div v-for="item in items" class="d-flex flex-column align-center ma-5">
-          <span class="text-h5 font-weight-bold">{{ item.number }}</span>
+          <span class="text-h5 font-weight-bold">{{
+            userData[`${item.property}`]
+          }}</span>
           <span>{{ item.title }}</span>
         </div>
       </div>

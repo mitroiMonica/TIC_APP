@@ -4,17 +4,33 @@ import { API_URL } from "@/config";
 import { toast } from "vue3-toastify";
 import userStore from "@/context/loggedUser.js";
 
-const { token } = userStore();
+const props = defineProps({
+  isEditing: Boolean,
+  recipeEdited: Object,
+});
+const { token, userData } = userStore();
 const valid = ref(false);
-const name = ref(undefined);
+const name = ref(props.recipeEdited ? props.recipeEdited.name : undefined);
 const picture = ref(undefined);
-const category = ref(undefined);
-const preparation_time = ref(undefined);
-const no_servings = ref(undefined);
-const calories = ref(undefined);
-const tags = ref(undefined);
-const ingredients = ref(undefined);
-const preparation_method = ref(undefined);
+const category = ref(
+  props.recipeEdited ? props.recipeEdited.category : undefined
+);
+const preparation_time = ref(
+  props.recipeEdited ? props.recipeEdited.preparation_time : undefined
+);
+const no_servings = ref(
+  props.recipeEdited ? props.recipeEdited.no_servings : undefined
+);
+const calories = ref(
+  props.recipeEdited ? props.recipeEdited.calories : undefined
+);
+const tags = ref(props.recipeEdited ? props.recipeEdited.tags : undefined);
+const ingredients = ref(
+  props.recipeEdited ? props.recipeEdited.ingredients : undefined
+);
+const preparation_method = ref(
+  props.recipeEdited ? props.recipeEdited.preparation_method : undefined
+);
 const requiredRule = (field) => () => {
   if (field) return true;
   return "This field is required";
@@ -75,6 +91,7 @@ const createRecipe = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       toast.success(data.message);
+      userData.value.no_recipes += 1;
       clearFileds();
     }
   } catch (err) {
@@ -191,7 +208,7 @@ const createRecipe = async () => {
       :disabled="!valid"
       @click="createRecipe"
     >
-      Create
+      {{ isEditing ? "Edit" : "Create" }}
     </v-btn>
   </div>
 </template>
