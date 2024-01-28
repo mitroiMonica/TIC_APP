@@ -94,6 +94,7 @@ const createRecipe = async (req, res, next) => {
     if (tags) {
       newRecipe["tags"] = tags.split(/[,\s\n]+/);
     }
+    newRecipe["no_likes"] = 0;
     await recipeRef.add(newRecipe);
     res.status(201).json({
       status: "success",
@@ -111,12 +112,25 @@ const getUserRecipes = async (req, res, next) => {
     const recipesSnapshot = await recipeRef
       .where("author.id", "==", req.params.id)
       .get();
+    let favorites;
+    if (req.query.loggedUserId) {
+      const userRef = db.collection("Users").doc(req.query.loggedUserId);
+      const user = await userRef.get();
+      if (!user.empty) {
+        favorites = user.data().favorites;
+      }
+    }
     const userRecipes = [];
     recipesSnapshot.forEach((recipe) => {
       const newRecipe = {
         id: recipe.id,
         ...recipe.data(),
       };
+      if (favorites && favorites.length !== 0) {
+        if (favorites.includes(newRecipe.id)) {
+          newRecipe["isFavorite"] = true;
+        }
+      }
       userRecipes.push(newRecipe);
     });
     res.json({
