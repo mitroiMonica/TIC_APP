@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { toast } from "vue3-toastify";
 import { API_URL, API_PHOTOS } from "@/config.js";
 import { userStore } from "@/context/loggedUser.js";
@@ -7,7 +7,6 @@ import router from "@/router/index.js";
 import EditRecipeButton from "./EditRecipeButton.vue";
 
 const { userId, userData, token, isLogged } = userStore();
-const dialog = ref([]);
 const props = defineProps({
   isHomepage: Boolean,
   areFavorites: Boolean,
@@ -15,10 +14,10 @@ const props = defineProps({
 });
 const search = ref("");
 const sorted = ref({
-  byDate: "",
+  byIngredients: "",
   byLikes: "",
 });
-const dateIcon = ref("mdi-clock-outline");
+const dateIcon = ref("mdi-format-list-checkbox");
 const likeIcon = ref("mdi-heart-outline");
 let recipes = ref([]);
 const getRecipes = async () => {
@@ -104,23 +103,23 @@ const resetIcons = (name, icon, mdiIcon) => {
     icon.value = mdiIcon;
   }
 };
-const sortRecipesByDate = () => {
-  if (sorted.value.byDate === "") {
-    sorted.value.byDate = "asc";
-    dateIcon.value = "mdi-sort-clock-ascending";
+const sortRecipesByIngredients = () => {
+  if (sorted.value.byIngredients === "") {
+    sorted.value.byIngredients = "asc";
+    dateIcon.value = "mdi-sort-bool-ascending-variant";
     recipes.value.sort(
       (r1, r2) => r1.ingredients.length - r2.ingredients.length
     );
     resetIcons("byLikes", likeIcon, "mdi-heart-outline");
-  } else if (sorted.value.byDate === "asc") {
-    sorted.value.byDate = "desc";
-    dateIcon.value = "mdi-sort-clock-descending";
+  } else if (sorted.value.byIngredients === "asc") {
+    sorted.value.byIngredients = "desc";
+    dateIcon.value = "mdi-sort-bool-descending-variant";
     recipes.value.sort(
       (r1, r2) => r2.ingredients.length - r1.ingredients.length
     );
   } else {
-    sorted.value.byDate = "";
-    dateIcon.value = "mdi-clock-outline";
+    sorted.value.byIngredients = "";
+    dateIcon.value = "mdi-format-list-checkbox";
     recipes.value.sort((r1, r2) => r2.date - r1.date);
   }
 };
@@ -129,7 +128,7 @@ const sortRecipesByLikes = () => {
     sorted.value.byLikes = "asc";
     likeIcon.value = "mdi-heart-circle-outline";
     recipes.value.sort((r1, r2) => r1.no_likes - r2.no_likes);
-    resetIcons("byDate", dateIcon, "mdi-clock-outline");
+    resetIcons("byIngredients", dateIcon, "mdi-format-list-checkbox");
   } else if (sorted.value.byLikes === "asc") {
     sorted.value.byLikes = "desc";
     likeIcon.value = "mdi-heart-circle";
@@ -173,7 +172,7 @@ const sortRecipesByLikes = () => {
           density="compact"
           color="primary"
           :icon="dateIcon"
-          @click="sortRecipesByDate"
+          @click="sortRecipesByIngredients"
         >
         </v-btn>
       </v-toolbar>
