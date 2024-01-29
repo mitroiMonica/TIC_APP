@@ -54,7 +54,7 @@ const clearFileds = () => {
   ingredients.value = undefined;
   preparation_method.value = undefined;
 };
-const createRecipe = async () => {
+const modifyRecipes = async () => {
   try {
     const formData = new FormData();
     formData.append("name", name.value);
@@ -78,8 +78,13 @@ const createRecipe = async () => {
     if (picture.value) {
       formData.append("photo", picture.value[0]);
     }
+    let method = "POST";
+    if (props.isEditing) {
+      method = "PATCH";
+      formData.append("recipeId", props.recipeEdited.id);
+    }
     const response = await fetch(`${API_URL}/recipes`, {
-      method: "POST",
+      method,
       headers: {
         Authorization: "Bearer " + token.value,
       },
@@ -91,8 +96,10 @@ const createRecipe = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       toast.success(data.message);
-      userData.value.no_recipes += 1;
-      clearFileds();
+      if (!props.isEditing) {
+        userData.value.no_recipes += 1;
+        clearFileds();
+      }
     }
   } catch (err) {
     toast.error(err.message);
@@ -113,7 +120,6 @@ const createRecipe = async () => {
             bg-color="ternary"
           ></v-text-field>
         </v-col>
-
         <v-col cols="12" xs="12" sm="6" md="4">
           <v-file-input
             style="overflow: auto"
@@ -123,6 +129,8 @@ const createRecipe = async () => {
             variant="solo"
             bg-color="ternary"
             prepend-icon=""
+            accept="image/*"
+            :messages="isEditing ? 'Picture remains is not changed' : ''"
           ></v-file-input>
         </v-col>
 
@@ -206,7 +214,7 @@ const createRecipe = async () => {
       color="primary"
       rounded
       :disabled="!valid"
-      @click="createRecipe"
+      @click="modifyRecipes"
     >
       {{ isEditing ? "Edit" : "Create" }}
     </v-btn>

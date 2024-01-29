@@ -58,9 +58,6 @@ const createRecipe = async (req, res, next) => {
       throw new AppError("Complete all required fields!", 400);
     }
     const user = await db.collection("Users").doc(req.userId).get();
-    if (!user.exists) {
-      throw new AppError("Invalid user!", 400);
-    }
     const recipeRef = db.collection("Recipes");
     const newRecipe = {
       name,
@@ -167,4 +164,82 @@ const deleteRecipe = async (req, res, next) => {
   }
 };
 
-export { createRecipe, getAllRecipes, getUserRecipes, deleteRecipe };
+const updateRecipe = async (req, res, next) => {
+  try {
+    if (!req.body.recipeId) {
+      throw new AppError("Recipe id must be provided");
+    }
+    const recipeRef = db.collection("Recipes").doc(req.body.recipeId);
+    const recipe = await recipeRef.get();
+    if (!recipe.exists) {
+      throw new AppError("Invalid recipe!");
+    }
+    if (recipe.data().author.id !== req.userId) {
+      throw new AppError("You can only update your own recipes");
+    }
+    const {
+      name,
+      category,
+      preparation_time,
+      no_servings,
+      calories,
+      tags,
+      ingredients,
+      preparation_method,
+    } = req.body;
+    if (!name || !ingredients || !preparation_method) {
+      throw new AppError("Complete all required fields!", 400);
+    }
+    const recipeUpdated = {
+      name,
+      author: {
+        ...recipe.data().author,
+      },
+      date: recipe.data().date,
+      ingredients: ingredients
+        .split(/,|\n/)
+        .map((item) => item.trim())
+        .filter((item) => item !== ""),
+      preparation_method,
+    };
+    if (req.file) {
+      recipeUpdated["picture"] = req.file.filename;
+    } else if (recipe.data().picture) {
+      recipeUpdated["picture"] = recipe.data().picture;
+    }
+    if (category) {
+      recipeUpdated["category"] = category;
+    }
+    if (preparation_time) {
+      recipeUpdated["preparation_time"] = preparation_time;
+    }
+    if (no_servings) {
+      recipeUpdated["no_servings"] = no_servings;
+    }
+    if (calories) {
+      recipeUpdated["calories"] = calories;
+    }
+    if (tags) {
+      recipeUpdated["tags"] = tags
+        .split(/,|\n/)
+        .map((item) => item.trim())
+        .filter((item) => item !== "");
+    }
+    await recipeRef.set(recipeUpdated);
+    res.json({
+      status: "success",
+      message: "Recipe successfully updated",
+      recipe: recipeUpdated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export {
+  createRecipe,
+  getAllRecipes,
+  getUserRecipes,
+  deleteRecipe,
+  updateRecipe,
+};

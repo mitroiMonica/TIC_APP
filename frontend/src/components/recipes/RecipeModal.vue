@@ -48,10 +48,10 @@ const buttonHandler = async () => {
         class="text-disabled close-button"
         size="x-large"
         @click="isOpen = false"
-        >mdi-close</v-icon
-      >
+        >mdi-close
+      </v-icon>
       <template v-slot:title>
-        <div class="text text-center font-weight-bold text-h5 pa-2 mt-4">
+        <div class="text text-center font-weight-bold text-h5 pa-2">
           {{ title }}
         </div>
       </template>

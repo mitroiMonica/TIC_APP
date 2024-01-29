@@ -5,6 +5,7 @@ import {
   deleteRecipe,
   getAllRecipes,
   getUserRecipes,
+  updateRecipe,
 } from "../controllers/recipeController.js";
 import {
   resizeUserPhoto,
@@ -18,6 +19,7 @@ router.get("/user/:id", getUserRecipes);
 
 router.use(protectRoutes);
 router.post("/", updateMiddleware, resizeUserPhoto, createRecipe);
+router.patch("/", updateMiddleware, resizeUserPhoto, updateRecipe);
 router.delete("/", deleteRecipe);
 
 export { router as recipeRouter };

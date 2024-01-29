@@ -5,6 +5,7 @@ import { API_URL, API_PHOTOS } from "@/config.js";
 import { userStore } from "@/context/loggedUser.js";
 import router from "@/router/index.js";
 import EditRecipeButton from "./EditRecipeButton.vue";
+import RecipeDetails from "./RecipeDetails.vue";
 
 const { userId, userData, token, isLogged } = userStore();
 const props = defineProps({
@@ -262,10 +263,7 @@ const sortRecipesByLikes = () => {
                     {{ item.preparation_time ? item.preparation_time : "-" }}
                   </div>
                 </div>
-
-                <v-btn flat size="small" class="text-none" color="primary"
-                  >Read
-                </v-btn>
+                <RecipeDetails :recipeData="item"></RecipeDetails>
               </div>
             </v-card>
           </v-col>
