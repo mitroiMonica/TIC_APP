@@ -54,7 +54,7 @@ const saveNewPhoto = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       toast.success(data.message);
-      userData.value = { ...userData.value, photo: data.filename };
+      // userData.value = { ...userData.value, photo: data.filename };
       closeModal();
     }
   } catch (err) {
@@ -83,6 +83,7 @@ const saveNewPhoto = async () => {
         variant="solo"
         bg-color="ternary"
         prepend-icon=""
+        accept="image/*"
       ></v-file-input>
       <v-divider color="primary" />
       <div class="my-6 mx-8 text-end">

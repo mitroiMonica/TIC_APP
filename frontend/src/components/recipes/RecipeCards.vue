@@ -6,12 +6,15 @@ import { userStore } from "@/context/loggedUser.js";
 import router from "@/router/index.js";
 import EditRecipeButton from "./EditRecipeButton.vue";
 import RecipeDetails from "./RecipeDetails.vue";
+import { firestoreDB } from "@/config.js";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 
 const { userId, userData, token, isLogged } = userStore();
 const props = defineProps({
   isHomepage: Boolean,
   areFavorites: Boolean,
   areUserRecipes: Boolean,
+  isLoggedUser: Boolean,
 });
 const search = ref("");
 const sorted = ref({
@@ -56,7 +59,6 @@ const getRecipes = async () => {
     toast.error(err.message);
   }
 };
-getRecipes();
 const changeFavorites = async (id) => {
   try {
     let url = `${API_URL}/users/favorites`;
@@ -78,16 +80,15 @@ const changeFavorites = async (id) => {
       userData.value.favorites = data.favorites;
       recipes.value
         .filter((recipe) => recipe.id === id)
-        .map((recipe) => {
+        .forEach((recipe) => {
           if (data.favorites.includes(recipe.id)) {
-            userData.value.no_favorites += 1;
-            return (recipe.isFavorite = true);
+            recipe.isFavorite = true;
+            recipe.no_likes++;
           } else {
-            userData.value.no_favorites -= 1;
-            return (recipe.isFavorite = false);
+            recipe.isFavorite = false;
+            recipe.no_likes--;
           }
         });
-      // getRecipes();
     }
   } catch (err) {
     toast.error(err.message);
@@ -140,6 +141,21 @@ const sortRecipesByLikes = () => {
     recipes.value.sort((r1, r2) => r2.date - r1.date);
   }
 };
+if (props.isLoggedUser) {
+  const recipesCollection = collection(firestoreDB, "Recipes");
+  const q = query(recipesCollection, where("author.id", "==", userId.value));
+  onSnapshot(q, (snapshot) => {
+    const userRecipes = snapshot.docs
+      .map((recipe) => ({
+        id: recipe.id,
+        ...recipe.data(),
+      }))
+      .sort((r1, r2) => r2.date - r1.date);
+    recipes.value = userRecipes;
+  });
+} else {
+  getRecipes();
+}
 </script>
 
 <template>
@@ -181,10 +197,10 @@ const sortRecipesByLikes = () => {
 
     <template v-slot:default="{ items }">
       <v-container class="pa-8" fluid>
-        <v-row>
+        <v-row dense>
           <v-col
-            v-for="item in recipes"
-            :key="item.id"
+            v-for="item in items"
+            :key="item.raw.id"
             cols="12"
             lg="3"
             md="4"
@@ -195,7 +211,9 @@ const sortRecipesByLikes = () => {
             <v-card class="pb-3" elevation="3">
               <v-img
                 :src="
-                  item.picture ? `${API_PHOTOS}/recipes/${item.picture}` : ''
+                  item.raw.picture
+                    ? `${API_PHOTOS}/recipes/${item.raw.picture}`
+                    : ''
                 "
               >
                 <v-btn
@@ -211,9 +229,9 @@ const sortRecipesByLikes = () => {
                   size="large"
                   icon=""
                   density="comfortable"
-                  @click="changeFavorites(item.id)"
+                  @click="changeFavorites(item.raw.id)"
                 >
-                  <v-icon :color="item.isFavorite ? 'red' : '#ced4da'">
+                  <v-icon :color="item.raw.isFavorite ? 'red' : '#ced4da'">
                     mdi-heart
                   </v-icon>
                 </v-btn>
@@ -222,7 +240,7 @@ const sortRecipesByLikes = () => {
                     areUserRecipes &&
                     router.currentRoute.value.params.id.split(':')[1] === userId
                   "
-                  :recipeData="item"
+                  :recipeData="item.raw"
                 ></EditRecipeButton>
               </v-img>
               <v-list-item class="my-2">
@@ -230,23 +248,23 @@ const sortRecipesByLikes = () => {
                   <span
                     class="text-h6 font-weight-bold"
                     style="color: rgb(var(--v-theme-primary))"
-                    >{{ item.name }}</span
+                    >{{ item.raw.name }}</span
                   >
                 </template>
                 <template v-slot:subtitle>
                   <div
                     class="text-caption"
                     style="cursor: pointer"
-                    @click="goToProfile(item.author.id)"
+                    @click="goToProfile(item.raw.author.id)"
                   >
-                    by {{ item.author.email }}
+                    by {{ item.raw.author.email }}
                   </div>
                 </template>
                 <template v-slot:default>
                   <div
                     class="my-4 text-body-2 truncate-text text-justify text-medium-emphasis font-italic"
                   >
-                    {{ item.preparation_method }}
+                    {{ item.raw.preparation_method }}
                   </div>
                 </template>
               </v-list-item>
@@ -260,10 +278,14 @@ const sortRecipesByLikes = () => {
                     class="text-truncate"
                     style="color: rgb(var(--v-theme-primary))"
                   >
-                    {{ item.preparation_time ? item.preparation_time : "-" }}
+                    {{
+                      item.raw.preparation_time
+                        ? item.raw.preparation_time
+                        : "-"
+                    }}
                   </div>
                 </div>
-                <RecipeDetails :recipeData="item"></RecipeDetails>
+                <RecipeDetails :recipeData="item.raw"></RecipeDetails>
               </div>
             </v-card>
           </v-col>

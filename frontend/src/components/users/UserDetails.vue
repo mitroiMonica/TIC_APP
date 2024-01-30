@@ -2,11 +2,16 @@
 import { API_PHOTOS } from "@/config.js";
 import PhotoModal from "./PhotoModal.vue";
 import { ref } from "vue";
+import { firestoreDB } from "@/config.js";
+import { doc, onSnapshot } from "firebase/firestore";
+import { watch } from "vue";
+import { userStore } from "@/context/loggedUser.js";
 
 const props = defineProps({
   userData: Object,
   isLoggedUser: Boolean,
 });
+const { userId } = userStore();
 const userData = props.userData;
 const items = [
   {
@@ -26,16 +31,24 @@ const isOpen = { dialog: ref(false) };
 const openModal = () => {
   isOpen.dialog.value = true;
 };
+watch(props.userData, () => {
+  if (props.isLoggedUser) {
+    const userDoc = doc(firestoreDB, "Users", userId.value);
+    onSnapshot(userDoc, (snapshot) => {
+      userData.value.photo = snapshot.data().photo;
+    });
+  }
+});
 </script>
 
 <template>
   <div
     v-if="userData && Object.keys(userData).length !== 0"
-    class="d-flex flex-md-row flex-column details-container"
+    class="d-flex flex-md-row flex-column"
   >
     <v-sheet
       elevation="8"
-      class="pa-5 d-flex flex-md-column flex-row justify-space-evenly align-center"
+      class="pa-5 d-flex flex-md-column flex-row justify-space-evenly align-center details-container"
       color="primary"
     >
       <div class="d-flex flex-column align-center">
@@ -58,16 +71,14 @@ const openModal = () => {
       <div class="d-flex flex-md-column flex-row align-center">
         <div v-for="item in items" class="d-flex flex-column align-center ma-5">
           <span class="text-h5 font-weight-bold">{{
-            userData[`${item.property}`]
+            userData[item.property] ? userData[item.property] : 0
           }}</span>
           <span>{{ item.title }}</span>
         </div>
       </div>
     </v-sheet>
-    <div class="recipes-container">
-      <slot></slot>
-    </div>
     <PhotoModal :isOpen="isOpen" v-if="isLoggedUser"></PhotoModal>
+    <slot></slot>
   </div>
 </template>
 
@@ -75,7 +86,11 @@ const openModal = () => {
 .details-container {
   height: 100vh;
   position: sticky;
-  left: 0;
+  z-index: 1;
+  top: 0;
+  @media only screen and (max-width: 960px) {
+    height: auto;
+  }
 }
 .text {
   color: rgb(var(--v-theme-primary));
@@ -84,6 +99,6 @@ const openModal = () => {
   cursor: pointer;
 }
 .recipes-container {
-  width: 100%;
+  width: auto;
 }
 </style>

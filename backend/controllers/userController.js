@@ -9,24 +9,11 @@ const getUserData = async (req, res, next) => {
     }
     const userRef = db.collection("Users").doc(userId);
     const user = await userRef.get();
-    const recipeRef = db.collection("Recipes");
-    const recipesSnapshot = await recipeRef
-      .where("author.id", "==", req.params.id)
-      .get();
-    let totalLikes = 0;
-    let noRecipes = 0;
-    recipesSnapshot.forEach((recipe) => {
-      totalLikes += recipe.data().no_likes;
-      noRecipes++;
-    });
     if (!user.exists) {
       throw new AppError("No user with such id", 400);
     } else {
       const userData = user.data();
       userData["password"] = undefined;
-      userData["total_likes"] = totalLikes;
-      userData["no_recipes"] = noRecipes;
-      userData["no_favorites"] = userData.favorites.length;
       res.json({ status: "success", userData });
     }
   } catch (err) {
