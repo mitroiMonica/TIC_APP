@@ -54,7 +54,7 @@ const saveNewPhoto = async () => {
       toast.error(data.message);
     } else if (data.status === "success") {
       toast.success(data.message);
-      // userData.value = { ...userData.value, photo: data.filename };
+      userData.value = { ...userData.value, photo: data.filename };
       closeModal();
     }
   } catch (err) {

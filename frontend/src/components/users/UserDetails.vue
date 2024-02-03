@@ -78,7 +78,9 @@ watch(props.userData, () => {
       </div>
     </v-sheet>
     <PhotoModal :isOpen="isOpen" v-if="isLoggedUser"></PhotoModal>
-    <slot></slot>
+    <div class="recipes-container">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -99,6 +101,6 @@ watch(props.userData, () => {
   cursor: pointer;
 }
 .recipes-container {
-  width: auto;
+  width: 100%;
 }
 </style>
