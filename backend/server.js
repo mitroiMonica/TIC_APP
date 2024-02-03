@@ -4,6 +4,8 @@ import cors from "cors";
 
 import { userRouter } from "./routes/userRoutes.js";
 import { recipeRouter } from "./routes/recipeRoutes.js";
+import { commentRouter } from "./routes/commentRoutes.js";
+import { notificationRouter } from "./routes/notificationRoutes.js";
 
 dotenv.config({
   path: "./.env",
@@ -25,6 +27,8 @@ app.use(
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/recipes", recipeRouter);
+app.use("/api/v1/comments", commentRouter);
+app.use("/api/v1/notifications", notificationRouter);
 
 app.use((error, request, response, next) => {
   response.status(error.statusCode || 500).json({

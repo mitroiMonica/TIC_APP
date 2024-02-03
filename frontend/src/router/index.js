@@ -25,12 +25,12 @@ const router = createRouter({
     {
       path: "/favorites",
       name: "favorites",
-      component: () => import("./../views/Favorites.vue"),
+      component: () => import("./../views/FavoritesPage.vue"),
     },
     {
       path: "/notifications",
       name: "notifications",
-      component: () => import("./../views/Notifications.vue"),
+      component: () => import("./../views/NotificationsPage.vue"),
     },
     {
       path: "/profile/:id",

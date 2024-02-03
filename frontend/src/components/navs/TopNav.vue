@@ -8,7 +8,7 @@ const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
   <v-layout>
     <v-app-bar color="primary">
       <v-toolbar-title :class="`title  ${isLogged ? '' : ' text-center'}`"
-        >Instagram</v-toolbar-title
+        >KitchMe</v-toolbar-title
       >
       <v-spacer v-if="isLogged" />
       <v-avatar

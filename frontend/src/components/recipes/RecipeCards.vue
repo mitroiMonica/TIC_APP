@@ -103,7 +103,6 @@ const resetIcons = (name, icon, mdiIcon) => {
   if (sorted.value[name] !== "") {
     sorted.value[name] = "";
     icon.value = mdiIcon;
-    recipes.value.sort((r1, r2) => r2.date - r1.date);
   }
 };
 const sortRecipesByIngredients = () => {

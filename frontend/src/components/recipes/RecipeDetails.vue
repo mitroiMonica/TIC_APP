@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { API_PHOTOS } from "@/config";
 import router from "@/router/index.js";
+import CommentsSection from "./CommentsSection.vue";
 
 const props = defineProps({
   recipeData: Object,
@@ -31,6 +32,7 @@ const goToProfile = (id) => {
             density="compact"
             icon=""
             @click="dialog = false"
+            color="ternary"
           >
             <v-icon color="primary">mdi-close</v-icon></v-btn
           >
@@ -68,7 +70,6 @@ const goToProfile = (id) => {
                 <v-col
                   cols="12"
                   sm="6"
-                  class=""
                   v-for="element in [
                     { name: 'category', title: 'Category: ' },
                     { name: 'preparation_time', title: 'Preparation time: ' },
@@ -125,6 +126,12 @@ const goToProfile = (id) => {
                 {{ recipeData.preparation_method }}
               </div>
             </v-col>
+            <v-col cols="12" class="mt-5 divider-display">
+              <v-divider />
+            </v-col>
+            <v-col cols="12" class="mt-5">
+              <CommentsSection :recipeData="recipeData" />
+            </v-col>
             <v-col cols="12" class="text-center">
               <v-card-actions>
                 <v-btn
@@ -147,7 +154,7 @@ const goToProfile = (id) => {
 
 <style>
 .recipe-image {
-  border-radius: 0.8rem;
+  border-radius: 0.5rem;
 }
 .close-button {
   float: right;

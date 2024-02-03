@@ -4,9 +4,12 @@ import { toast } from "vue3-toastify";
 import jwt_decode from "jwt-decode";
 import router from "@/router/index.js";
 import { API_URL } from "@/config.js";
+import { firestoreDB } from "@/config.js";
+import { collection, onSnapshot, doc } from "firebase/firestore";
 
 export const userStore = defineStore("loggedUser", () => {
   const token = ref(localStorage.getItem("token"));
+  const userUnreadNotifications = ref(0);
   const isLogged = computed(() => (token.value ? true : false));
   const userId = computed(() => {
     try {
@@ -48,11 +51,19 @@ export const userStore = defineStore("loggedUser", () => {
       router.push("/profile/:" + id);
     }
   };
+  const userDoc = doc(firestoreDB, "Users", userId.value);
+  const notificationCollection = collection(userDoc, "Notifications");
+  onSnapshot(notificationCollection, (snapshot) => {
+    userUnreadNotifications.value = snapshot.docs.filter(
+      (notification) => !notification.data().read
+    ).length;
+  });
   return {
     token: computed(() => token),
     userId: computed(() => userId),
     isLogged: computed(() => isLogged),
     userData: computed(() => userData),
+    userUnreadNotifications: computed(() => userUnreadNotifications),
     logoutHandler,
     goToProfile,
   };

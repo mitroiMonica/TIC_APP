@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import userStore from "@/context/loggedUser.js";
-const { isLogged } = userStore();
+const { isLogged, userUnreadNotifications } = userStore();
 const items = computed(() =>
   isLogged.value
     ? [
@@ -49,6 +49,18 @@ const items = computed(() =>
         :to="item.value === 'homepage' ? '/' : `/${item.value}`"
       >
         {{ item.title }}
+        <template
+          v-slot:prepend
+          v-if="item.value === 'notifications' && userUnreadNotifications !== 0"
+        >
+          <v-badge
+            color="error"
+            :content="userUnreadNotifications"
+            offset-y="7"
+          >
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-badge>
+        </template>
       </v-btn>
     </v-bottom-navigation>
   </v-layout>

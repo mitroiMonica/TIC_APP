@@ -5,7 +5,14 @@ import { ref, computed } from "vue";
 import router from "@/router/index.js";
 const drawer = ref(true);
 const rail = ref(true);
-const { isLogged, logoutHandler, goToProfile, userId, userData } = userStore();
+const {
+  isLogged,
+  logoutHandler,
+  goToProfile,
+  userId,
+  userData,
+  userUnreadNotifications,
+} = userStore();
 const items = computed(() =>
   isLogged.value
     ? [
@@ -91,7 +98,23 @@ const clickHandler = () => {
           :key="item.value"
           class="custom-list-item"
           :to="item.value === 'homepage' ? '/' : `/${item.value}`"
-        ></v-list-item>
+        >
+          <template
+            v-slot:prepend
+            v-if="
+              item.value === 'notifications' && userUnreadNotifications !== 0
+            "
+          >
+            <v-badge
+              color="error"
+              :content="userUnreadNotifications"
+              offset-y="3"
+              offset-x="3"
+            >
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-badge>
+          </template>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append>
