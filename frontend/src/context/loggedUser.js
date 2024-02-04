@@ -51,12 +51,16 @@ export const userStore = defineStore("loggedUser", () => {
       router.push("/profile/:" + id);
     }
   };
-  const userDoc = doc(firestoreDB, "Users", userId.value);
-  const notificationCollection = collection(userDoc, "Notifications");
-  onSnapshot(notificationCollection, (snapshot) => {
-    userUnreadNotifications.value = snapshot.docs.filter(
-      (notification) => !notification.data().read
-    ).length;
+  watchEffect(() => {
+    if (userId.value) {
+      const userDoc = doc(firestoreDB, "Users", userId.value);
+      const notificationCollection = collection(userDoc, "Notifications");
+      onSnapshot(notificationCollection, (snapshot) => {
+        userUnreadNotifications.value = snapshot.docs.filter(
+          (notification) => !notification.data().read
+        ).length;
+      });
+    }
   });
   return {
     token: computed(() => token),

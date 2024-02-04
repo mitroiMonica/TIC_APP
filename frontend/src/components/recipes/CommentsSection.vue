@@ -106,6 +106,13 @@ const editHandler = (commentId, commentText) => {
   editText.value = commentText;
   editingComment.value = commentId;
 };
+const addCommentHandler = () => {
+  if (!userId.value) {
+    toast.error("You must be logged in for this action!");
+  } else {
+    addComment.value = true;
+  }
+};
 </script>
 
 <template>
@@ -200,7 +207,7 @@ const editHandler = (commentId, commentText) => {
     variant="tonal"
     style="float: right"
     class="text-none mt-2"
-    @click="addComment = true"
+    @click="addCommentHandler"
   >
     Add comment
   </v-btn>

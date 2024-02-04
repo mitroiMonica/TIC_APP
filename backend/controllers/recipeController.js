@@ -201,6 +201,7 @@ const updateRecipe = async (req, res, next) => {
         .map((item) => item.trim())
         .filter((item) => item !== ""),
       preparation_method,
+      no_likes: recipe.data().no_likes,
     };
     if (req.file) {
       recipeUpdated["picture"] = req.file.filename;
