@@ -103,16 +103,17 @@ const resetIcons = (name, icon, mdiIcon) => {
   if (sorted.value[name] !== "") {
     sorted.value[name] = "";
     icon.value = mdiIcon;
+    recipes.value.sort((r1, r2) => r2.date - r1.date);
   }
 };
 const sortRecipesByIngredients = () => {
   if (sorted.value.byIngredients === "") {
     sorted.value.byIngredients = "asc";
     dateIcon.value = "mdi-sort-bool-descending-variant";
+    resetIcons("byLikes", likeIcon, "mdi-heart-outline");
     recipes.value.sort(
       (r1, r2) => r1.ingredients.length - r2.ingredients.length
     );
-    resetIcons("byLikes", likeIcon, "mdi-heart-outline");
   } else if (sorted.value.byIngredients === "asc") {
     sorted.value.byIngredients = "desc";
     dateIcon.value = "mdi-sort-bool-ascending-variant";
@@ -129,8 +130,8 @@ const sortRecipesByLikes = () => {
   if (sorted.value.byLikes === "") {
     sorted.value.byLikes = "asc";
     likeIcon.value = "mdi-heart-circle";
-    recipes.value.sort((r1, r2) => r1.no_likes - r2.no_likes);
     resetIcons("byIngredients", dateIcon, "mdi-format-list-checkbox");
+    recipes.value.sort((r1, r2) => r1.no_likes - r2.no_likes);
   } else if (sorted.value.byLikes === "asc") {
     sorted.value.byLikes = "desc";
     likeIcon.value = "mdi-heart-circle-outline";

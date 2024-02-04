@@ -52,11 +52,12 @@ const clickHandler = async (notificationId, type) => {
       <v-row class="ma-2">
         <v-col cols="12" xs="12" md="6" lg="4" v-for="notification in items">
           <div class="notification-box pa-5">
-            <div
-              v-if="notification.raw.type === 'comment'"
-              class="text-subtitle-1 text font-weight-bold"
-            >
-              new comment
+            <div class="text-subtitle-1 text font-weight-bold">
+              {{
+                notification.raw.type === "comment"
+                  ? "new comment ✏️"
+                  : "new like ❤️"
+              }}
             </div>
             <div class="text-end text-body-2 text-medium-emphasis">
               {{

@@ -16,9 +16,9 @@ const isOpen = computed(() => dialog);
     icon="mdi-plus"
     elevation="5"
   />
-  <RecipeModal :isOpen="isOpen" title="Create Recipe"
-    ><RecipeForm></RecipeForm
-  ></RecipeModal>
+  <RecipeModal :isOpen="isOpen" title="Create Recipe">
+    <RecipeForm :isOpen="isOpen"></RecipeForm>
+  </RecipeModal>
 </template>
 
 <style>

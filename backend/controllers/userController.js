@@ -80,6 +80,21 @@ const changeFavoriteRecipes = async (req, res, next) => {
             no_likes: 1,
           });
         }
+        const newNotification = {
+          type: "likes",
+          text:
+            "User '" +
+            user.data().email +
+            "' liked your '" +
+            recipe.data().name +
+            "' recipe.",
+          date: Date.now(),
+          read: false,
+        };
+        const notifiedUserRef = db
+          .collection("Users")
+          .doc(recipe.data().author.id);
+        notifiedUserRef.collection("Notifications").add(newNotification); //nu pun await ca nu vreau sa astept pentru asta
       }
       res.json({
         status: "success",

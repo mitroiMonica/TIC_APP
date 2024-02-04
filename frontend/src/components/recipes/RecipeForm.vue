@@ -7,6 +7,7 @@ import userStore from "@/context/loggedUser.js";
 const props = defineProps({
   isEditing: Boolean,
   recipeEdited: Object,
+  isOpen: Object,
 });
 const { token, userData } = userStore();
 const valid = ref(false);
@@ -100,6 +101,7 @@ const modifyRecipes = async () => {
         userData.value.no_recipes += 1;
         clearFileds();
       }
+      props.isOpen.value = false;
     }
   } catch (err) {
     toast.error(err.message);

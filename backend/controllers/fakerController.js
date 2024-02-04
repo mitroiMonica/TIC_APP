@@ -181,6 +181,7 @@ const setFavoritesRecipes = async (req, res, next) => {
     usersSnapshot.forEach((user) => {
       users.push({
         id: user.id,
+        email: user.data().email,
         favorites: user.data().favorites,
       });
     });
@@ -189,6 +190,8 @@ const setFavoritesRecipes = async (req, res, next) => {
     recipesSnapshot.forEach((recipe) => {
       recipes.push({
         id: recipe.id,
+        name: recipe.data().name,
+        authorId: recipe.data().author.id,
         noLikes: recipe.data().no_likes,
       });
     });
@@ -206,6 +209,21 @@ const setFavoritesRecipes = async (req, res, next) => {
         await recipeRef.update({
           no_likes: ++chosenRecipe.noLikes,
         });
+        const newNotification = {
+          type: "likes",
+          text:
+            "User '" +
+            chosenUser.email +
+            "' liked your '" +
+            chosenRecipe.name +
+            "' recipe.",
+          date: Date.now(),
+          read: false,
+        };
+        const notifiedUserRef = db
+          .collection("Users")
+          .doc(chosenRecipe.authorId);
+        await notifiedUserRef.collection("Notifications").add(newNotification);
       }
     }
     res.json({

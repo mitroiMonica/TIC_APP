@@ -25,8 +25,13 @@ const isOpen = computed(() => dialog);
     title="Edit Recipe"
     :isEditing="true"
     :recipeEditedId="recipeData.id"
-    ><RecipeForm :isEditing="true" :recipeEdited="recipeData"></RecipeForm
-  ></RecipeModal>
+  >
+    <RecipeForm
+      :isEditing="true"
+      :recipeEdited="recipeData"
+      :isOpen="isOpen"
+    ></RecipeForm>
+  </RecipeModal>
 </template>
 
 <style>
